@@ -386,6 +386,10 @@ In this part, we will explore some of the non-idealities and robustness of a con
 
 2. Edit `AltitudeControl()` to add basic integral control to help with the different-mass vehicle.
 
+First make sure the velocity is between 0 and `maxDescentRate` if the velocity is positive (going down) and between `-maxAscentRate` and 0 if the velocity is negative (going up) since we're in NED coordinate system.
+
+Then the altitude command is a PID controller controlling the vertical acceleration. I also implemented a clamping mechanism for the integral part to avoid integral windup. So the vertical acceleration is `u_bar = kpPosZ * errorPosZ + kpVelZ * errorVelZ + KiPosZ * integratedError` where integratedError is clamped and equal to `dt * errorPosZ`. The collective thrust is given by $c = (\bar{u} - g)/b^z$ where $b^z = R_{33}$. Since we ened the thrust (N), in the NED coordinate system, we have `thrust = -mass * c`
+
 3. Tune the integral control, and other control parameters until all the quads successfully move properly.  Your drones' motion should look like this:
 
 <p align="center">
@@ -411,6 +415,8 @@ You will notice that initially these two trajectories are the same. Let's work o
 2. Generate a new `FigureEightFF.txt` that has velocity terms
 Did the velocity-specified trajectory make a difference? Why?
 
+Adding the velocities gives more information about the desired state of the drone at each point in the trajectory, and thus allows it to better predict where it should be and act accordingly.
+
 With the two different trajectories, your drones' motions should look like this:
 
 <p align="center">
@@ -424,6 +430,7 @@ For flying a trajectory, is there a way to provide even more information for eve
 
 How about trying to fly this trajectory as quickly as possible (but within following threshold)!
 
+-> I managed to do the figure eight loop 12% faster, and the drone is still within the error margins.
 
 ## Evaluation ##
 
