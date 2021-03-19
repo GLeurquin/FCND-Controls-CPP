@@ -17,26 +17,51 @@ with open('FigureEight.txt', 'w') as the_file:
     px = 0;
     py = 0;
     pz = 0;
+    croll = 0;
+    cpitch = 0;
+    cyaw = 0;
     while t <= maxtime:
-        x = math.sin(t * 2 * math.pi / period[0] + phase[0]) * radius * amp[0] + center[0];
-        y = math.sin(t * 2 * math.pi / period[1] + phase[1]) * radius * amp[1] + center[1];
-        z = math.sin(t * 2 * math.pi / period[2] + phase[2]) * radius * amp[2] + center[2];
+        fx = t * 1.12
+        x = math.sin(fx * 2 * math.pi / period[0] + phase[0]) * radius * amp[0] + center[0];
+        y = math.sin(fx * 2 * math.pi / period[1] + phase[1]) * radius * amp[1] + center[1];
+        z = math.sin(fx * 2 * math.pi / period[2] + phase[2]) * radius * amp[2] + center[2];
         the_file.write(fmt(t) + "," + fmt(x) + "," + fmt(y) + "," + fmt(z));
-		vx = 0;
-		vy = 0;
-		vz = 0;
-		######## BEGIN STUDENT CODE
-		
-		######## END STUDENT CODE
-		the_file.write("," + fmt(vx) + "," + fmt(vy) + "," + fmt(vz));
-		######## EXAMPLE SOLUTION
+        vx = 0;
+        vy = 0;
+        vz = 0;
+        ######## BEGIN STUDENT CODE
+        # t, px, py, pz, vx, vy, vz, roll, pitch, yaw, ox, oy, oz
+        vx = (x-px)/timestep
+        vy = (y-py)/timestep
+        vz = (z-pz)/timestep
+
+        roll = math.atan(vx);
+        pitch = math.atan(vy);
+        yaw = math.atan(vz);
+
+        px = x
+        py = y
+        pz = z
+
+        vroll = (roll - croll)/timestep
+        vpitch = (pitch - cpitch)/timestep
+        vyaw = (yaw - cyaw)/timestep
+
+        croll = roll
+        cpitch = pitch
+        cyaw = yaw
+
+        ######## END STUDENT CODE
+        the_file.write("," + fmt(vx) + "," + fmt(vy) + "," + fmt(vz));
+        the_file.write("," + fmt(roll) + "," + fmt(pitch) + "," + fmt(yaw));
+        the_file.write("," + fmt(vroll) + "," + fmt(vpitch) + "," + fmt(vyaw));
+        ######## EXAMPLE SOLUTION
         #the_file.write("," + fmt((x-px)/timestep) + "," + fmt((y-py)/timestep) + "," + fmt((z-pz)/timestep));
-		#px = x;
+        #px = x;
         #py = y;
         #pz = z;
-		######## END EXAMPLE SOLUTION
-		
+        ######## END EXAMPLE SOLUTION
+
         the_file.write("\n");
-        
+
         t += timestep;
-            
